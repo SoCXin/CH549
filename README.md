@@ -1,7 +1,5 @@
 ﻿# [CH548](https://github.com/sochub/CH548) 
-
 [![sites](SoC/SoC.png)](http://www.qitas.cn) 
-
 ####  qitas@qitas.cn
 #### 父级：[WCH-8051](https://github.com/sochub/WCH-8051) 
 #### 归属：[MCS-51](https://github.com/sochub/MCS-51) 
