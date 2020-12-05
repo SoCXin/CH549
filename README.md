@@ -4,10 +4,10 @@
 
 #### [Vendor](https://github.com/SoCXin/Vendor)：[WCH](http://www.wch.cn/)
 #### [Core](https://github.com/SoCXin/8051)：[E8051](https://github.com/SoCXin/8051)
-#### [Level](https://github.com/SoCXin/Level)：12/48MHz
+#### [Level](https://github.com/SoCXin/Level)：48MHz
 ## [简介](https://github.com/SoCXin/CH549/wiki)
 
-[CH549](https://github.com/SoCXin/CH549) 兼容MCS51的增强型E8051内核，79%指令是单字节单周期指令，60KB Flash，2K+256B RAM，1K DATA.
+[CH549](https://github.com/SoCXin/CH549) 兼容MCS51的增强型E8051内核，79%指令是单字节单周期指令，3KB BootLoader + 60KB CodeFlash，2K xRAM + 256B iRAM，1K DataFlash。
 
 支持 USB-Host主机模式和 USB-Device设备模式，支持 USB 2.0 全速 12Mbps，支持USB PD和Type-C。内置 FIFO支持最大64字节数据包,支持 DMA。
 
@@ -17,21 +17,22 @@
 
 #### 关键特性
 
-* 支持[USB-PD](https://github.com/Qful/PD)
-* Type-C CC控制
+* Type-C CC控制,支持[USB-PD](https://github.com/Qful/PD)
 * USB全速主/从模式
-* UART x 4
+* UART x 4 + SPI (M/S)
+* 16通道 12位ADC，支持电压比较
 * 封装(LQFP48/QFN28/SOP16)
 
 ### [资源收录](https://github.com/SoCXin/CH549)
 
-- [文档](docs/)
-- [资源](src/)
+* [参考文档](docs/)
+* [参考资源](src/)
+* [参考工程](project/)
 
 ### [选型建议](https://github.com/SoCXin)
 
-[CH549](https://github.com/SoCXin/CH549) 特色是单芯片支持Type-C和USB-PD，多串口支持
+[CH549](https://github.com/SoCXin/CH549) 特色支持Type-C和USB-PD，4串口满足数据传输需求。
 
-降配存储规格可选[CH548](http://www.wch.cn/products/CH548.html)。
+[CH548](http://www.wch.cn/products/CH548.html) 相比只降CodeFlash为35KB
 
 ###  [SoC芯平台](http://www.SoC.Xin)
