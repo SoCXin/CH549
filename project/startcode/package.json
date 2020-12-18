@@ -1,7 +1,7 @@
 {
     "name":"CH549",
     "Vendor":"wch",
-    "description":"CH549评估板说明及参考应用例程",
+    "description":"CH549参考应用例程",
     "url":"http://www.wch.cn/downloads/CH549EVT_ZIP.html",
     "version":"1.2.0"
 }

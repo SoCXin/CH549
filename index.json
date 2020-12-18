@@ -1,0 +1,62 @@
+{
+    "name":"CH549",
+    "series":["CH549","CH548"],
+    "type":"MCU",
+    "Core":"MCS51",
+    "Freq":48,
+    "Level":1,
+    "price":[4,6],
+    "description":"WCH 1T 8051 MCU",
+    "peripheral": ["TIM","ADC","USB","UART","SPI","LDO","PWM"],
+    "package":["QFN28","LQFP48","SOP16","SOP8"],
+    "encryption": ["UID","OTP"],
+    "SRAM":2,
+    "Flash":64,
+    "DATA":1024,
+    "GPIO":[6,44,16],
+    "TIM": {
+        "resolution":[16,16,16],
+        "WWDG": true
+    },
+    "UART": {
+        "num": 2,
+        "mark":1,
+        "FIFO": 16,
+        "ISO7816": 1,
+        "more":["BUAD","LIN","IrDA"]
+    },
+    "ADC": {
+        "num": 1,
+        "channel": 4,
+        "resolution": 12,
+        "MSPS": 1
+    },
+    "USB": {
+        "num": 1,
+        "PD": true,
+        "FIFO": true,
+        "more":["FS","type-C","Host","Device"]
+    },
+    "PWR": {
+        "VDD": [2800,5000],
+        "Ivdd": 3.5,
+        "LDO": [5000,3300],
+        "rate": 1024
+    },
+    "PWM": {
+        "num": 2,
+        "resolution": 8,
+        "rate": 256
+    },
+    "upload": {
+        "ISP": true,
+        "IAP": true,
+        "SWD": true,
+        "speed": 115200
+    },
+    "vendor":"WCH",
+    "url":"http://www.SoC.xin/CH549",
+    "repo":"https://github.com/SoCXin/CH549",
+    "homepage": "http://www.wch.cn/products/CH549.html",
+    "version":"1.0.0"
+}
