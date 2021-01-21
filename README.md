@@ -3,7 +3,7 @@
 [![sites](http://182.61.61.133/link/resources/SoC.png)](http://www.SoC.Xin)
 
 #### [Vendor](https://github.com/SoCXin/Vendor)：[WCH](http://www.wch.cn/)
-#### [Core](https://github.com/SoCXin/8051)：[E8051](https://github.com/SoCXin/8051)
+#### [Core](https://github.com/SoCXin/8051)：[8051](https://github.com/SoCXin/8051)
 #### [Level](https://github.com/SoCXin/Level)：48MHz
 ## [简介](https://github.com/SoCXin/CH549/wiki)
 
@@ -21,7 +21,6 @@
 * USB全速主/从模式
 * UART x 4 + SPI (M/S)
 * 16通道12位ADC，支持电压比较
-* 封装(LQFP48/QFN28/SOP16)
 
 ### [资源收录](https://github.com/SoCXin/CH549)
 
@@ -32,7 +31,5 @@
 ### [选型建议](https://github.com/SoCXin)
 
 [CH549](https://github.com/SoCXin/CH549) 特色支持Type-C和USB-PD，4串口满足数据传输需求。
-
-[CH548](http://www.wch.cn/products/CH548.html) 相比只降CodeFlash为35KB
 
 ###  [www.SoC.xin(芯)](http://www.SoC.Xin)
