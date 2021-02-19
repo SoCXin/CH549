@@ -62,33 +62,33 @@ void CMP_Init( void )
 *******************************************************************************/
 void CMP_IN_Minus_Signal_SELT(UINT8 mode)
 {
-    switch(mode)
-    {
-        case 0:
-        ADC_CFG = ADC_CFG | bVDD_REF_EN | bCMP_EN; //ADC/comparator IN-连接VDD/8
-        ADC_CHAN &= ~MASK_CMP_CHAN;
-        break;
-        case 1:
-        ADC_CFG = ADC_CFG | bVDD_REF_EN & ~bCMP_EN; //ADC/comparator IN-连接VDD
-        ADC_CHAN = ADC_CHAN & ~MASK_CMP_CHAN | 0x40;
-        break;
-        case 2:
-        ADC_CFG = ADC_CFG | bVDD_REF_EN | bCMP_EN; //ADC/comparator IN-连接VDD/4
-        ADC_CHAN = ADC_CHAN & ~MASK_CMP_CHAN | 0x40;
-        break;
-        case 3:
-        ADC_CFG |= bCMP_EN;                        //ADC/comparator IN-连接P11
-        ADC_CHAN = ADC_CHAN & ~MASK_CMP_CHAN | 0x80;
-        break;
-        case 4:
-        ADC_CFG |= bCMP_EN;                        //ADC/comparator IN-连接P12
-        ADC_CHAN |= MASK_CMP_CHAN;
-        break;
-        case 5:
-        break;
-        default:
-        break;
-    }
+  switch(mode)
+  {
+    case 0:
+      ADC_CFG = ADC_CFG | bVDD_REF_EN | bCMP_EN; //ADC/comparator IN-连接VDD/8
+      ADC_CHAN &= ~MASK_CMP_CHAN;	
+    break;	
+    case 1:
+      ADC_CFG = ADC_CFG | bVDD_REF_EN & ~bCMP_EN; //ADC/comparator IN-连接VDD
+      ADC_CHAN = ADC_CHAN & ~MASK_CMP_CHAN | 0x40;	      			
+    break;
+    case 2:
+      ADC_CFG = ADC_CFG | bVDD_REF_EN | bCMP_EN; //ADC/comparator IN-连接VDD/4
+      ADC_CHAN = ADC_CHAN & ~MASK_CMP_CHAN | 0x40;				
+    break;
+    case 3:
+      ADC_CFG |= bCMP_EN;                        //ADC/comparator IN-连接P11
+      ADC_CHAN = ADC_CHAN & ~MASK_CMP_CHAN | 0x80;			
+    break;
+    case 4:
+      ADC_CFG |= bCMP_EN;                        //ADC/comparator IN-连接P12
+      ADC_CHAN |= MASK_CMP_CHAN;				
+    break;
+    case 5:
+    break;
+    default:
+    break;			
+  }
 }
 /*******************************************************************************
 * Function Name  : CMP_Inter_IN_Plus_Signal_SELT

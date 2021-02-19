@@ -17,7 +17,7 @@
 
 #### 关键特性
 
-* Type-C CC控制,支持[USB-PD](https://github.com/Qful/PD)
+* Type-C CC控制,支持[USB-PD](https://github.com/Qful/PD)协议
 * USB全速主/从模式
 * UART x 4 + SPI (M/S)
 * 16通道12位ADC，支持电压比较
