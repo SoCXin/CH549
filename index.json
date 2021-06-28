@@ -1,24 +1,28 @@
 {
     "type":"MCU",
     "name":"CH549",
-    "series":["CH549","CH548"],
-    "price":[4,6],
+    "title": "Raspberry Pi RP2040 MCU",
     "description":"WCH 1T 8051 MCU",
-    "peripheral": ["TIM","ADC","USB","UART","SPI","LDO","PWM"],
-    "package":["LQFP48","QFN28","SOP16"],
-    "encryption": ["UID"],
+    "version":"1.0.0",
+    "Core": {
+        "num": 1,
+        "type":"8051",
+        "Freq":48,
+        "DMIPS": 100,
+        "CoreMark": 160
+    },
     "manufacturer": {
         "vendor":"WCH",
         "homepage": "http://www.wch.cn/products/CH549.html"
     },
-    "url":"http://www.SoC.xin/CH549",
-    "repo":"https://github.com/SoCXin/CH549",
-    "version":"1.2.0",
-    "Core": {
-        "num": 1,
-        "architecture":"MCS51",
-        "Freq":[8,48]
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/SoCXin/CH549.git"
     },
+    "series":["CH549","CH548","CH547","CH546"],
+    "package":["LQFP48","QFN28","SOP16"],
+    "peripheral": ["TIM","ADC","USB","UART","SPI","LDO","PWM"],
+    "price":[4,6],
     "TIM": {
         "resolution":[16,16,16],
         "WWDG": true
@@ -64,5 +68,14 @@
         "IAP": true,
         "SWD": true,
         "speed": 115200
-    }
+    },
+    "keywords": [
+        "dev-platform",
+        "ARM",
+        "Cortex-M",
+        "Raspberry Pi",
+        "RP2040",
+        "DAC","SDIO","CAN","I2C","RTC","SPI",
+        "3.6V","1.8V"
+    ]
 }
