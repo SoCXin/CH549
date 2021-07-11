@@ -8,11 +8,13 @@
                        D2慢闪
                        注意包含DEBUG.C
 *******************************************************************************/
-#include ".\Public\CH549.H"
-#include ".\Public\DEBUG.H"
+#include "..\..\Public\CH549.H"
+#include "..\..\Public\DEBUG.H"
+
 #pragma NOAREGS
 #define IAP_StartAddr     0xE000                            //IAP程序存放的起始地址，该地址至少要比实际的IAP地址小4字节
-sbit    EnableIAP  =      P5^7;                             //IAP跳转检测引脚
+sbit    EnableIAP  =      P2^2;
+sbit    D1 = P1^6;                          //IAP跳转检测引脚
 sbit    D2 = P1^7;
 typedef void (*Function)( void );
 Function Jump2IAPAddr;
@@ -38,8 +40,10 @@ void main( void )
             printf("Jump to IAP..\n");
             Jump2IAPAddr( );                               //跳转至IAP程序区
         }
+        else  D1 = ~D1;
+        mDelaymS(100);
         i++;
-        if(i== 200000)
+        if(i== 10)
         {
             printf("User APP Wait..\n");
             D2 = ~D2;
