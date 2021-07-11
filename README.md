@@ -2,10 +2,8 @@
 
 [![sites](http://182.61.61.133/link/resources/SoC.png)](http://www.SoC.Xin)
 
-[![Build Status](https://github.com/SoCXin/CH549/workflows/src/badge.svg)](https://github.com/SoCXin/CH549/actions/workflows/src.yml)
-
 * [WCH](http://www.wch.cn/)：[8051](https://github.com/SoCXin/8051)
-* [L3R2](https://github.com/SoCXin/Level)：48 MHz
+* [L2R2](https://github.com/SoCXin/Level)：48 MHz
 
 ## [简介](https://github.com/SoCXin/CH549/wiki)
 
@@ -40,5 +38,8 @@
 * QFN28 (4*4mm)
 * SOP16
 
+#### 相关开发板
+
+[![sites](docs/B.png)](https://item.taobao.com/item.htm?spm=a230r.1.14.24.4ed427efMWU1cc&id=642494404263&ns=1&abbucket=18#detail)
 
 ### [探索芯世界 www.SoC.xin](http://www.SoC.Xin)
