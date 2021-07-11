@@ -12,8 +12,8 @@
 #include ".\Public\DEBUG.H"
 #pragma NOAREGS
 #define IAP_StartAddr     0xE000                            //IAP程序存放的起始地址，该地址至少要比实际的IAP地址小4字节
-sbit    EnableIAP  =      P4^6;                             //IAP跳转检测引脚
-sbit    D2 = P2^2;
+sbit    EnableIAP  =      P5^7;                             //IAP跳转检测引脚
+sbit    D2 = P1^7;
 typedef void (*Function)( void );
 Function Jump2IAPAddr;
 /*******************************************************************************
