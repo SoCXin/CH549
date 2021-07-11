@@ -3,8 +3,8 @@
 * Author             : WCH
 * Version            : V1.0
 * Date               : 2018/08/09
-* Description        : CH549 GPIO¹¦ÄÜÑÝÊ¾,ÆÕÍ¨ÊäÈëÊä³ö²âÊÔ£»ÖÐ¶Ï´¥·¢Ä£Ê½
-                       ×¢Òâ°üº¬DEBUG.C
+* Description        : CH549 GPIOåŠŸèƒ½æ¼”ç¤º,æ™®é€šè¾“å…¥è¾“å‡ºæµ‹è¯•ï¼›ä¸­æ–­è§¦å‘æ¨¡å¼
+                        æ³¨æ„åŒ…å«DEBUG.C
 *******************************************************************************/
 #include ".\Public\CH549.H"
 #include ".\Public\DEBUG.H"
@@ -12,23 +12,21 @@
 #pragma  NOAREGS
 sbit LED2 = P1^6;
 sbit LED3 = P1^7;
- 
+
 void main()
 {
-    CfgFsys( );                                                               //CH549Ê±ÖÓÑ¡ÔñÅäÖÃ
+    CfgFsys( );                                                               //CH549æ—¶é’Ÿé€‰æ‹©é…ç½®
     mDelaymS(20);
-    mInitSTDIO( );                                                            //´®¿Ú0³õÊ¼»¯
-    printf("GPIO demo start ...\n");
-    /* ÅäÖÃGPIO */
-    GPIO_Init( PORT1,PIN7,MODE1);                                              //P1.0ÉÏÀ­ÊäÈë
-    GPIO_Init( PORT1,PIN6,MODE1);                                              //P1.4ÍÆÍìÊä³ö
-    
-    
+    mInitSTDIO( );                                                            //ä¸²å£0åˆå§‹åŒ–
+    printf("GPIO demo blink start ...\n");
+    /* é…ç½®GPIO */
+    GPIO_Init( PORT1,PIN7,MODE1);                                              //P1.0ä¸Šæ‹‰è¾“å…¥
+    GPIO_Init( PORT1,PIN6,MODE1);                                              //P1.4æŽ¨æŒ½è¾“å‡º
     while(1)
     {
         LED2 = ~LED2;
-        LED3 = ~LED3;
-         printf("loop ...\n");
+        printf("loop ...\n");
         mDelaymS(300);
+        LED3 = ~LED3;
     }
 }

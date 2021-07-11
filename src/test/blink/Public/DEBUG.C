@@ -4,10 +4,10 @@
 * Version            : V1.0
 * Date               : 2018/09/20
 * Description        : CH5XX DEBUG Interface
-                     (1)¡¢Ö÷ÆµÉèÖÃ;
-                     (2)¡¢us\ms»ù±¾ÑÓÊ±º¯Êý;										 
-                     (3)¡¢´®¿Ú0Êä³ö´òÓ¡ÐÅÏ¢£¬²¨ÌØÂÊ¿Éµ÷;            				   
-                     (4)¡¢¿´ÃÅ¹·³õÊ¼»¯ºÍ¸³Öµº¯Êý;    										 
+                     (1)ã€ä¸»é¢‘è®¾ç½®;
+                     (2)ã€us\msåŸºæœ¬å»¶æ—¶å‡½æ•°;
+                     (3)ã€ä¸²å£0è¾“å‡ºæ‰“å°ä¿¡æ¯ï¼Œæ³¢ç‰¹çŽ‡å¯è°ƒ;
+                     (4)ã€çœ‹é—¨ç‹—åˆå§‹åŒ–å’Œèµ‹å€¼å‡½æ•°;
 *******************************************************************************/
 
 #include ".\Public\CH549.H"
@@ -15,64 +15,64 @@
 
 /*******************************************************************************
 * Function Name  : CfgFsys( )
-* Description    : CH5XXÊ±ÖÓÑ¡ÔñºÍÅäÖÃº¯Êý,Ä¬ÈÏÊ¹ÓÃÄÚ²¿¾§Õñ24MHz£¬Èç¹û¶¨ÒåÁËFREQ_SYS¿ÉÒÔ
-                   ¸ù¾ÝPLL_CFGºÍCLOCK_CFGÅäÖÃµÃµ½£¬¹«Ê½ÈçÏÂ£º
+* Description    : CH5XXæ—¶é’Ÿé€‰æ‹©å’Œé…ç½®å‡½æ•°,é»˜è®¤ä½¿ç”¨å†…éƒ¨æ™¶æŒ¯24MHzï¼Œå¦‚æžœå®šä¹‰äº†FREQ_SYSå¯ä»¥
+                   æ ¹æ®PLL_CFGå’ŒCLOCK_CFGé…ç½®å¾—åˆ°ï¼Œå…¬å¼å¦‚ä¸‹ï¼š
                    Fsys = (Fosc * ( PLL_CFG & MASK_PLL_MULT ))/(CLOCK_CFG & MASK_SYS_CK_DIV);
-                   ¾ßÌåÊ±ÖÓÐèÒª×Ô¼ºÅäÖÃ
+                   å…·ä½“æ—¶é’Ÿéœ€è¦è‡ªå·±é…ç½®
 * Input          : None
 * Output         : None
 * Return         : None
-*******************************************************************************/ 
-void CfgFsys( )  
+*******************************************************************************/
+void CfgFsys( )
 {
-#if OSC_EN_XT	
+#if OSC_EN_XT
 		SAFE_MOD = 0x55;
 		SAFE_MOD = 0xAA;
-    CLOCK_CFG |= bOSC_EN_XT;                          //Ê¹ÄÜÍâ²¿¾§Õñ
-    CLOCK_CFG &= ~bOSC_EN_INT;                        //¹Ø±ÕÄÚ²¿¾§Õñ 
+    CLOCK_CFG |= bOSC_EN_XT;                          //ä½¿èƒ½å¤–éƒ¨æ™¶æŒ¯
+    CLOCK_CFG &= ~bOSC_EN_INT;                        //å…³é—­å†…éƒ¨æ™¶æŒ¯
 #else
 		SAFE_MOD = 0x55;
 		SAFE_MOD = 0xAA;
-    CLOCK_CFG |= bOSC_EN_INT;                        //Ê¹ÄÜÄÚ²¿¾§Õñ 
-    CLOCK_CFG &= ~bOSC_EN_XT;                        //¹Ø±ÕÍâ²¿¾§Õñ	
-#endif	
+    CLOCK_CFG |= bOSC_EN_INT;                        //ä½¿èƒ½å†…éƒ¨æ™¶æŒ¯
+    CLOCK_CFG &= ~bOSC_EN_XT;                        //å…³é—­å¤–éƒ¨æ™¶æŒ¯
+#endif
 		SAFE_MOD = 0x55;
 		SAFE_MOD = 0xAA;
-#if FREQ_SYS == 48000000	
-		CLOCK_CFG = CLOCK_CFG & ~ MASK_SYS_CK_SEL | 0x07;  // 48MHz	
-#endif	
-#if FREQ_SYS == 32000000	
-		CLOCK_CFG = CLOCK_CFG & ~ MASK_SYS_CK_SEL | 0x06;  // 32MHz	
-#endif	
-#if FREQ_SYS == 24000000		
-		CLOCK_CFG = CLOCK_CFG & ~ MASK_SYS_CK_SEL | 0x05;  // 24MHz	
+#if FREQ_SYS == 48000000
+		CLOCK_CFG = CLOCK_CFG & ~ MASK_SYS_CK_SEL | 0x07;  // 48MHz
 #endif
-#if FREQ_SYS == 16000000		
+#if FREQ_SYS == 32000000
+		CLOCK_CFG = CLOCK_CFG & ~ MASK_SYS_CK_SEL | 0x06;  // 32MHz
+#endif
+#if FREQ_SYS == 24000000
+		CLOCK_CFG = CLOCK_CFG & ~ MASK_SYS_CK_SEL | 0x05;  // 24MHz
+#endif
+#if FREQ_SYS == 16000000
 		CLOCK_CFG = CLOCK_CFG & ~ MASK_SYS_CK_SEL | 0x04;  // 16MHz
-#endif	
-#if FREQ_SYS == 12000000		
-		CLOCK_CFG = CLOCK_CFG & ~ MASK_SYS_CK_SEL | 0x03;  // 12MHz	
-#endif	
-#if FREQ_SYS == 3000000	
-		CLOCK_CFG = CLOCK_CFG & ~ MASK_SYS_CK_SEL | 0x02;  // 3MHz	
 #endif
-#if FREQ_SYS == 750000	
+#if FREQ_SYS == 12000000
+		CLOCK_CFG = CLOCK_CFG & ~ MASK_SYS_CK_SEL | 0x03;  // 12MHz
+#endif
+#if FREQ_SYS == 3000000
+		CLOCK_CFG = CLOCK_CFG & ~ MASK_SYS_CK_SEL | 0x02;  // 3MHz
+#endif
+#if FREQ_SYS == 750000
 		CLOCK_CFG = CLOCK_CFG & ~ MASK_SYS_CK_SEL | 0x01;  // 750KHz
 #endif
-#if FREQ_SYS == 187500	
-		CLOCK_CFG = CLOCK_CFG & ~ MASK_SYS_CK_SEL | 0x00;  // 187.5KHz	
+#if FREQ_SYS == 187500
+		CLOCK_CFG = CLOCK_CFG & ~ MASK_SYS_CK_SEL | 0x00;  // 187.5KHz
 #endif
 		SAFE_MOD = 0x00;
 }
 
 /*******************************************************************************
 * Function Name  : mDelayus(UNIT16 n)
-* Description    : usÑÓÊ±º¯Êý
+* Description    : uså»¶æ—¶å‡½æ•°
 * Input          : UNIT16 n
 * Output         : None
 * Return         : None
-*******************************************************************************/ 
-void mDelayuS( UINT16 n )  // ÒÔuSÎªµ¥Î»ÑÓÊ±
+*******************************************************************************/
+void mDelayuS( UINT16 n )  // ä»¥uSä¸ºå•ä½å»¶æ—¶
 {
 	while ( n ) {  // total = 12~13 Fsys cycles, 1uS @Fsys=12MHz
 		++ SAFE_MOD;  // 2 Fsys cycles, for higher Fsys, add operation here
@@ -150,38 +150,38 @@ void mDelayuS( UINT16 n )  // ÒÔuSÎªµ¥Î»ÑÓÊ±
 
 /*******************************************************************************
 * Function Name  : mDelayms(UNIT16 n)
-* Description    : msÑÓÊ±º¯Êý
+* Description    : mså»¶æ—¶å‡½æ•°
 * Input          : UNIT16 n
 * Output         : None
 * Return         : None
 *******************************************************************************/
-void mDelaymS( UINT16 n )                                                  // ÒÔmSÎªµ¥Î»ÑÓÊ±
+void mDelaymS( UINT16 n )                                                  // ä»¥mSä¸ºå•ä½å»¶æ—¶
 {
-	while ( n ) 
+	while ( n )
 	{
 		mDelayuS( 1000 );
 		-- n;
 	}
-}                                         
+}
 
 /*******************************************************************************
 * Function Name  : CH549UART0Alter()
-* Description    : CH549´®¿Ú0Òý½ÅÓ³Éä,´®¿ÚÓ³Éäµ½P0.2(R)ºÍP0.3(T)
+* Description    : CH549ä¸²å£0å¼•è„šæ˜ å°„,ä¸²å£æ˜ å°„åˆ°P0.2(R)å’ŒP0.3(T)
 * Input          : None
 * Output         : None
 * Return         : None
 *******************************************************************************/
 void CH549UART0Alter()
 {
-	P0_MOD_OC |= (3<<2);                                                   //×¼Ë«ÏòÄ£Ê½
+	P0_MOD_OC |= (3<<2);                                                   //å‡†åŒå‘æ¨¡å¼
 	P0_DIR_PU |= (3<<2);
-	PIN_FUNC |= bUART0_PIN_X;                                              //¿ªÆôÒý½Å¸´ÓÃ¹¦ÄÜ
+	PIN_FUNC |= bUART0_PIN_X;                                              //å¼€å¯å¼•è„šå¤ç”¨åŠŸèƒ½
 }
 
 /*******************************************************************************
 * Function Name  : mInitSTDIO()
-* Description    : CH559´®¿Ú0³õÊ¼»¯,Ä¬ÈÏÊ¹ÓÃT1×÷UART0µÄ²¨ÌØÂÊ·¢ÉúÆ÷,Ò²¿ÉÒÔÊ¹ÓÃT2
-                   ×÷Îª²¨ÌØÂÊ·¢ÉúÆ÷
+* Description    : CH559ä¸²å£0åˆå§‹åŒ–,é»˜è®¤ä½¿ç”¨T1ä½œUART0çš„æ³¢ç‰¹çŽ‡å‘ç”Ÿå™¨,ä¹Ÿå¯ä»¥ä½¿ç”¨T2
+                   ä½œä¸ºæ³¢ç‰¹çŽ‡å‘ç”Ÿå™¨
 * Input          : None
 * Output         : None+
 * Return         : None
@@ -189,31 +189,31 @@ void CH549UART0Alter()
 void mInitSTDIO( )
 {
     UINT32 x;
-    UINT8 x2; 
+    UINT8 x2;
 
     SM0 = 0;
     SM1 = 1;
-    SM2 = 0;                                                                   //´®¿Ú0Ê¹ÓÃÄ£Ê½1
-                                                                               //Ê¹ÓÃTimer1×÷Îª²¨ÌØÂÊ·¢ÉúÆ÷
-    RCLK = 0;                                                                  //UART0½ÓÊÕÊ±ÖÓ
-    TCLK = 0;                                                                  //UART0·¢ËÍÊ±ÖÓ
+    SM2 = 0;                                                                   //ä¸²å£0ä½¿ç”¨æ¨¡å¼1
+                                                                               //ä½¿ç”¨Timer1ä½œä¸ºæ³¢ç‰¹çŽ‡å‘ç”Ÿå™¨
+    RCLK = 0;                                                                  //UART0æŽ¥æ”¶æ—¶é’Ÿ
+    TCLK = 0;                                                                  //UART0å‘é€æ—¶é’Ÿ
     PCON |= SMOD;
-    x = 10 * FREQ_SYS / UART0BUAD / 16;                                        //Èç¹û¸ü¸ÄÖ÷Æµ£¬×¢ÒâxµÄÖµ²»ÒªÒç³ö                            
+    x = 10 * FREQ_SYS / UART0BUAD / 16;                                        //å¦‚æžœæ›´æ”¹ä¸»é¢‘ï¼Œæ³¨æ„xçš„å€¼ä¸è¦æº¢å‡º
     x2 = x % 10;
     x /= 10;
-    if ( x2 >= 5 ) x ++;                                                       //ËÄÉáÎåÈë
+    if ( x2 >= 5 ) x ++;                                                       //å››èˆäº”å…¥
 
-    TMOD = TMOD & ~ bT1_GATE & ~ bT1_CT & ~ MASK_T1_MOD | bT1_M1;              //0X20£¬Timer1×÷Îª8Î»×Ô¶¯ÖØÔØ¶¨Ê±Æ÷
-    T2MOD = T2MOD | bTMR_CLK | bT1_CLK;                                        //Timer1Ê±ÖÓÑ¡Ôñ
-    TH1 = 0-x;                                                                 //12MHz¾§Õñ,buad/12ÎªÊµ¼ÊÐèÉèÖÃ²¨ÌØÂÊ
-    TR1 = 1;                                                                   //Æô¶¯¶¨Ê±Æ÷1
+    TMOD = TMOD & ~ bT1_GATE & ~ bT1_CT & ~ MASK_T1_MOD | bT1_M1;              //0X20ï¼ŒTimer1ä½œä¸º8ä½è‡ªåŠ¨é‡è½½å®šæ—¶å™¨
+    T2MOD = T2MOD | bTMR_CLK | bT1_CLK;                                        //Timer1æ—¶é’Ÿé€‰æ‹©
+    TH1 = 0-x;                                                                 //12MHzæ™¶æŒ¯,buad/12ä¸ºå®žé™…éœ€è®¾ç½®æ³¢ç‰¹çŽ‡
+    TR1 = 1;                                                                   //å¯åŠ¨å®šæ—¶å™¨1
     TI = 1;
-    REN = 1;                                                                   //´®¿Ú0½ÓÊÕÊ¹ÄÜ
+    REN = 1;                                                                   //ä¸²å£0æŽ¥æ”¶ä½¿èƒ½
 }
 
  /*******************************************************************************
  * Function Name  : CH549SoftReset()
- * Description    : CH549Èí¸´Î»
+ * Description    : CH549è½¯å¤ä½
  * Input          : None
  * Output         : None
  * Return         : None
@@ -226,9 +226,9 @@ void CH549SoftReset( )
 }
 /*******************************************************************************
 * Function Name  : CH549WDTModeSelect(UINT8 mode)
-* Description    : CH549¿´ÃÅ¹·Ä£Ê½Ñ¡Ôñ
-*                  8Î»¼ÆÊýÆ÷£¬Òç³öÖÜÆÚ£¨Ãë£©£º (131072/FREQ_SYS)*£¨256-WDOG_COUNT£©
-* Input          : UINT8 mode 
+* Description    : CH549çœ‹é—¨ç‹—æ¨¡å¼é€‰æ‹©
+*                  8ä½è®¡æ•°å™¨ï¼Œæº¢å‡ºå‘¨æœŸï¼ˆç§’ï¼‰ï¼š (131072/FREQ_SYS)*ï¼ˆ256-WDOG_COUNTï¼‰
+* Input          : UINT8 mode
                    0  timer
                    1  watchDog
 * Output         : None
@@ -237,19 +237,19 @@ void CH549SoftReset( )
 void CH549WDTModeSelect(UINT8 mode)
 {
    SAFE_MOD = 0x55;
-   SAFE_MOD = 0xaa;                                                             //½øÈë°²È«Ä£Ê½
+   SAFE_MOD = 0xaa;                                                             //è¿›å…¥å®‰å…¨æ¨¡å¼
    if(mode){
-     GLOBAL_CFG |= bWDOG_EN;                                                    //Æô¶¯¿´ÃÅ¹·¸´Î»
+     GLOBAL_CFG |= bWDOG_EN;                                                    //å¯åŠ¨çœ‹é—¨ç‹—å¤ä½
    }
-   else GLOBAL_CFG &= ~bWDOG_EN;	                                              //Æô¶¯¿´ÃÅ¹·½ö½ö×÷Îª¶¨Ê±Æ÷
-   SAFE_MOD = 0x00;                                                             //ÍË³ö°²È«Ä£Ê½
-   WDOG_COUNT = 0;                                                              //¿´ÃÅ¹·¸³³õÖµ
+   else GLOBAL_CFG &= ~bWDOG_EN;	                                              //å¯åŠ¨çœ‹é—¨ç‹—ä»…ä»…ä½œä¸ºå®šæ—¶å™¨
+   SAFE_MOD = 0x00;                                                             //é€€å‡ºå®‰å…¨æ¨¡å¼
+   WDOG_COUNT = 0;                                                              //çœ‹é—¨ç‹—èµ‹åˆå€¼
 }
 
 /*******************************************************************************
 * Function Name  : CH549WDTFeed(UINT8 tim)
-* Description    : CH549¿´ÃÅ¹·¶¨Ê±Ê±¼äÉèÖÃ
-* Input          : UINT8 tim ¿´ÃÅ¹·¸´Î»Ê±¼äÉèÖÃ
+* Description    : CH549çœ‹é—¨ç‹—å®šæ—¶æ—¶é—´è®¾ç½®
+* Input          : UINT8 tim çœ‹é—¨ç‹—å¤ä½æ—¶é—´è®¾ç½®
                    00H(12MHz)=2.8s     00H(24MHz)=1.4s
                    80H(12MHz)=1.4s     80H(24MHz)=0.7s
 * Output         : None
@@ -257,7 +257,7 @@ void CH549WDTModeSelect(UINT8 mode)
 *******************************************************************************/
 void CH549WDTFeed(UINT8 tim)
 {
-   WDOG_COUNT = tim;                                                             //¿´ÃÅ¹·¼ÆÊýÆ÷¸³Öµ	
+   WDOG_COUNT = tim;                                                             //çœ‹é—¨ç‹—è®¡æ•°å™¨èµ‹å€¼
 }
 
 
