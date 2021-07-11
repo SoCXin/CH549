@@ -391,6 +391,11 @@
               <FileType>1</FileType>
               <FilePath>.\FlashRom\FlashRom.C</FilePath>
             </File>
+            <File>
+              <FileName>GPIO.C</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\GPIO\GPIO.C</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

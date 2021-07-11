@@ -13,7 +13,13 @@
 #include ".\Public\CH549.H"
 #include ".\Public\DEBUG.H"
 #include ".\FlashRom\FlashRom.H"
+#include ".\GPIO\GPIO.H"
+
 #pragma  NOAREGS
+sbit LED1 = P1^6;
+sbit LED2 = P2^2;
+sbit LED3 = P2^3;
+sbit LED4 = P2^4;
 UINT8X FlashBuf[64] _at_ 0x0000;                                               //对应于Flash页写的一个页,需要64字节对齐
 UINT8X temp[64];
 void main()
@@ -22,6 +28,8 @@ void main()
     CfgFsys( );                                                                //CH549时钟选择配置
     mDelaymS(20);
     mInitSTDIO( );                                                             //串口0初始化
+    GPIO_Init( PORT1,PIN7,MODE3);                                              //P1.0上拉输入
+    GPIO_Init( PORT1,PIN6,MODE1);
     printf("FlashRom demo start ...\n");
     for(i=0; i!=64; i++)
     {
@@ -126,5 +134,10 @@ void main()
 #endif
     while(1)
     {
+        LED1 = ~LED1;
+        LED2 = ~LED2;
+        LED3 = ~LED3;
+        LED4 = ~LED4;
+        mDelaymS(100);
     }
 }
