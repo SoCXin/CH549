@@ -1,7 +1,7 @@
 {
     "type":"MCU",
     "name":"CH549",
-    "title": "Raspberry Pi RP2040 MCU",
+    "title": "WCH MCU CH549",
     "description":"WCH 1T 8051 MCU",
     "version":"1.0.0",
     "Core": {
@@ -19,10 +19,10 @@
         "type": "git",
         "url": "https://github.com/SoCXin/CH549.git"
     },
-    "series":["CH549","CH548","CH547","CH546"],
+    "series":["CH549","CH548"],
     "package":["LQFP48","QFN28","SOP16"],
     "peripheral": ["TIM","ADC","USB","UART","SPI","LDO","PWM"],
-    "price":[4,6],
+    "RMB":[4,6],
     "TIM": {
         "resolution":[16,16,16],
         "WWDG": true
