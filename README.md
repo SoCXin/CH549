@@ -32,11 +32,11 @@
 
 ### [选型建议](https://github.com/SoCXin)
 
-[CH549](https://github.com/SoCXin/CH549) 特色Type-C和USB-PD，4串口满足数据传输需求。
+[CH549](https://github.com/SoCXin/CH549) 的特色Type-C和USB-PD，具备4串口满足数据传输需求，相较于[CH554](https://github.com/SoCXin/CH554)拥有更多资源和存储，但具有兼容性。
 
-* LQFP48 (7*7mm)
-* QFN28 (4*4mm)
-* SOP16
+* CH549L:LQFP48 (7*7mm)
+* CH549F:QFN28 (4*4mm)
+* CH549G:SOP16
 
 #### 相关开发板
 
