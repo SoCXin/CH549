@@ -6,11 +6,11 @@
 * Description        : IAP 功能演示例子程序
 *                      1，支持USB下载，USB为全速自定义设备
 *                      2，支持CodeFlash编程
-                        注意包含DEBUG.C
+                       注意包含DEBUG.C
 *******************************************************************************/
-#include "..\..\Public\CH549.H"
-#include "..\..\Public\DEBUG.H"
-#include ".\CH549_IAP.H"
+#include ".\Public\CH549.H"
+#include ".\Public\DEBUG.H"
+#include ".\IAP\IAP\CH549_IAP.H"
 /******************************************************************************
 *  注：CH549_IAP.C需要配合CH549_USER.C使用
 *  注意：本例子从0xE000开始存放IAP代码,也就是从56K处开始存放IAP,56K-60K位置可以用于存放IAP代码
@@ -27,7 +27,7 @@ UINT8C MyDevDescr[] = { 0x12, 0x01, 0x10, 0x01,
                         0xFF, 0x80, 0x55, THIS_ENDP0_SIZE,
                         0x48, 0x43, 0xe0, 0x55,
                         0x00, 0x01, 0x00, 0x00,0x00, 0x01
-                    };
+                      };
 // 配置描述符
 UINT8C MyCfgDescr[] = { 0x09, 0x02, 0x20, 0x00, 0x01, 0x01, 0x00, 0x80, 0x32,
                         0x09, 0x04, 0x00, 0x00, 0x02, 0xFF, 0x80, 0x55, 0x00,

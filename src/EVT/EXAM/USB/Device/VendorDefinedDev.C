@@ -11,6 +11,10 @@
 #include ".\Public\CH549.H"
 #include ".\Public\DEBUG.H"
 #define THIS_ENDP0_SIZE      DEFAULT_ENDP0_SIZE
+#define ENDP1_IN_SIZE        64
+#define ENDP2_IN_SIZE        64
+#define ENDP2_OUT_SIZE       64
+
 // Éè±¸ÃèÊö·û
 UINT8C  MyDevDescr[] = { 0x12, 0x01, 0x10, 0x01,
                          0xFF, 0x80, 0x55, THIS_ENDP0_SIZE,
@@ -21,9 +25,9 @@ UINT8C  MyDevDescr[] = { 0x12, 0x01, 0x10, 0x01,
 // ÅäÖÃÃèÊö·û
 UINT8C  MyCfgDescr[] = { 0x09, 0x02, 0x27, 0x00, 0x01, 0x01, 0x00, 0x80, 0x32,
                          0x09, 0x04, 0x00, 0x00, 0x03, 0xFF, 0x80, 0x55, 0x00,
-                         0x07, 0x05, 0x82, 0x02, 0x40, 0x00, 0x00,
-                         0x07, 0x05, 0x02, 0x02, 0x40, 0x00, 0x00,
-                         0x07, 0x05, 0x81, 0x03, 0x40, 0x00, 0x00
+                         0x07, 0x05, 0x82, 0x02, ENDP2_IN_SIZE, 0x00, 0x00,
+                         0x07, 0x05, 0x02, 0x02, ENDP2_OUT_SIZE, 0x00, 0x00,
+                         0x07, 0x05, 0x81, 0x03, ENDP1_IN_SIZE, 0x00, 0x00
                        };
 // ÓïÑÔÃèÊö·û
 UINT8C  MyLangDescr[] = { 0x04, 0x03, 0x09, 0x04 };
@@ -31,9 +35,9 @@ UINT8C  MyLangDescr[] = { 0x04, 0x03, 0x09, 0x04 };
 UINT8C  MyManuInfo[] = { 0x0E, 0x03, 'w', 0, 'c', 0, 'h', 0, '.', 0, 'c', 0, 'n', 0 };
 // ²úÆ·ÐÅÏ¢
 UINT8C  MyProdInfo[] = { 0x0C, 0x03, 'C', 0, 'H', 0, '5', 0, '4', 0, '9', 0 };
-UINT8X  Ep0Buffer[ THIS_ENDP0_SIZE+2 ] _at_ 0x0000;                               // OUT&IN
-UINT8X  Ep1Buffer[ MAX_PACKET_SIZE+2 ] _at_ THIS_ENDP0_SIZE+2;                    // IN
-UINT8X  Ep2Buffer[2*MAX_PACKET_SIZE+4] _at_ THIS_ENDP0_SIZE+MAX_PACKET_SIZE+4;    // OUT+IN
+UINT8X  Ep0Buffer[MIN(64,THIS_ENDP0_SIZE+2)] _at_ 0x0000;   // OUT&IN,±ØÐëÊÇÅ¼µØÖ·
+UINT8X  Ep1Buffer[MIN(64,ENDP1_IN_SIZE+2)]  _at_ MIN(64,THIS_ENDP0_SIZE+2);                    // IN,±ØÐëÊÇÅ¼µØÖ·
+UINT8X  Ep2Buffer[MIN(64,ENDP2_IN_SIZE+2)+MIN(64,ENDP2_OUT_SIZE+2)] _at_ (MIN(64,THIS_ENDP0_SIZE+2)+MIN(64,ENDP1_IN_SIZE+2));    // OUT+IN,±ØÐëÊÇÅ¼µØÖ·
 #define UsbSetupBuf     ((PUSB_SETUP_REQ)Ep0Buffer)
 UINT8   SetupReqCode, SetupLen;
 PUINT8  pDescr;
@@ -64,7 +68,7 @@ void USB_DeviceInterrupt( void ) interrupt INT_NO_USB using 1            /* USBÖ
             case UIS_TOKEN_OUT | 2:                                      // endpoint 2# ÅúÁ¿¶ËµãÏÂ´«
                 if ( U_TOG_OK )                                            // ²»Í¬²½µÄÊý¾Ý°ü½«¶ªÆú
                 {
-//                      UEP2_CTRL ^= bUEP_R_TOG;                               // ÒÑ×Ô¶¯·­×ª
+                    UEP2_CTRL ^= bUEP_R_TOG;                               // ÊÖ¶¯·­×ª
                     len = USB_RX_LEN;
                     for ( i = 0; i < len; i ++ )
                     {
@@ -75,15 +79,16 @@ void USB_DeviceInterrupt( void ) interrupt INT_NO_USB using 1            /* USBÖ
                 }
                 break;
             case UIS_TOKEN_IN | 2:                                       // endpoint 2# ÅúÁ¿¶ËµãÉÏ´«
-//                  UEP2_CTRL ^= bUEP_T_TOG;                                 // ÒÑ×Ô¶¯·­×ª
+                UEP2_CTRL ^= bUEP_T_TOG;                                 // ÊÖ¶¯·­×ª
                 UEP2_CTRL = UEP2_CTRL & ~ MASK_UEP_T_RES | UEP_T_RES_NAK;  // ÔÝÍ£ÉÏ´«
                 break;
             case UIS_TOKEN_IN | 1:                                       // endpoint 1# ÖÐ¶Ï¶ËµãÉÏ´«
-//                  UEP1_CTRL ^= bUEP_T_TOG;                                 // ÒÑ×Ô¶¯·­×ª
+                UEP1_CTRL ^= bUEP_T_TOG;                                 // ÊÖ¶¯·­×ª
                 UEP1_CTRL = UEP1_CTRL & ~ MASK_UEP_T_RES | UEP_T_RES_NAK;  // ÔÝÍ£ÉÏ´«
                 break;
             case UIS_TOKEN_SETUP | 0:                                    // endpoint 0# SETUP
-                len = USB_RX_LEN;
+                UEP0_CTRL = bUEP_R_TOG | bUEP_T_TOG | UEP_R_RES_ACK | UEP_T_RES_ACK; //Ô¤ÖÃNAK,·ÀÖ¹stallÖ®ºó²»¼°Ê±Çå³ýÏìÓ¦·½Ê½
+				len = USB_RX_LEN;
                 if ( len == sizeof( USB_SETUP_REQ ) )                      // SETUP°ü³¤¶È
                 {
                     SetupLen = UsbSetupBuf->wLengthL;
@@ -292,8 +297,8 @@ void USB_DeviceInterrupt( void ) interrupt INT_NO_USB using 1            /* USBÖ
     else if ( UIF_BUS_RST )                                           // USB×ÜÏß¸´Î»
     {
         UEP0_CTRL = UEP_R_RES_ACK | UEP_T_RES_NAK;
-        UEP1_CTRL = bUEP_AUTO_TOG | UEP_R_RES_ACK;
-        UEP2_CTRL = bUEP_AUTO_TOG | UEP_R_RES_ACK | UEP_T_RES_NAK;
+        UEP1_CTRL = UEP_T_RES_NAK;
+        UEP2_CTRL = UEP_R_RES_ACK | UEP_T_RES_NAK;
         USB_DEV_AD = 0x00;
         UIF_SUSPEND = 0;
         UIF_TRANSFER = 0;
@@ -341,9 +346,6 @@ void    InitUSB_Device( void )                                      // ³õÊ¼»¯USB
     UEP0_DMA = Ep0Buffer;
     UEP1_DMA = Ep1Buffer;
     UEP2_DMA = Ep2Buffer;
-    UEP0_CTRL = UEP_R_RES_ACK | UEP_T_RES_NAK;
-    UEP1_CTRL = bUEP_AUTO_TOG | UEP_R_RES_ACK;
-    UEP2_CTRL = bUEP_AUTO_TOG | UEP_R_RES_ACK | UEP_T_RES_NAK;
     USB_DEV_AD = 0x00;
     UDEV_CTRL = bUD_PD_DIS;                                         // ½ûÖ¹DP/DMÏÂÀ­µç×è
     USB_CTRL = bUC_DEV_PU_EN | bUC_INT_BUSY | bUC_DMA_EN;           // Æô¶¯USBÉè±¸¼°DMA£¬ÔÚÖÐ¶ÏÆÚ¼äÖÐ¶Ï±êÖ¾Î´Çå³ýÇ°×Ô¶¯·µ»ØNAK

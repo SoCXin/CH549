@@ -34,6 +34,10 @@
 #define  UART0BUAD     115200
 #endif
 
+#ifndef MIN
+#define MIN(a,b)                (((a) <= (b)) ? (a) : (b))
+#endif
+
 
 void	CfgFsys( );                        // CH549时钟选择和配置
 void	mDelayuS( UINT16 n );              // 以uS为单位延时

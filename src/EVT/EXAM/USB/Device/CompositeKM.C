@@ -20,11 +20,12 @@
 #else
 #define THIS_ENDP0_SIZE         8                                              //低速USB，中断传输、控制传输最大包长度为8
 #endif
-#define EP1_IN_SIZE             8                                              //键盘端点数据包大小
-#define EP2_IN_SIZE             4                                              //鼠标端点数据包大小
-UINT8X  Ep0Buffer[ THIS_ENDP0_SIZE+2 ] _at_ 0x0000;                            //端点0 OUT&IN缓冲区，必须是偶地址
-UINT8X  Ep1Buffer[ EP1_IN_SIZE+2 ]     _at_ THIS_ENDP0_SIZE+2;                 //端点1 IN缓冲区,必须是偶地址
-UINT8X  Ep2Buffer[ EP2_IN_SIZE+2 ]     _at_ THIS_ENDP0_SIZE+EP1_IN_SIZE+4;     //端点2 IN缓冲区,必须是偶地址
+#define ENDP1_IN_SIZE           8                                              //键盘端点数据包大小
+#define ENDP2_IN_SIZE           4                                              //鼠标端点数据包大小
+UINT8X	Ep0Buffer[MIN(64,THIS_ENDP0_SIZE+2)] _at_ 0x0000;    // OUT&IN,必须是偶地址
+UINT8X	Ep1Buffer[MIN(64,ENDP1_IN_SIZE+2)]  _at_ MIN(64,THIS_ENDP0_SIZE+2); 				  // IN,必须是偶地址
+UINT8X	Ep2Buffer[MIN(64,ENDP2_IN_SIZE+2)] _at_ (MIN(64,THIS_ENDP0_SIZE+2)+MIN(64,ENDP1_IN_SIZE+2));  //IN,必须是偶地址
+
 UINT8   SetupReq,Ready,UsbConfig;
 UINT16  SetupLen;
 PUINT8  pDescr;                                                                //USB配置标志
@@ -69,16 +70,16 @@ UINT8C CfgDesc[] =
 
     0x09,0x04,0x00,0x00,0x01,0x03,0x01,0x01,0x00,                    //接口描述符,键盘
     0x09,0x21,0x11,0x01,0x00,0x01,0x22,sizeof(KeyRepDesc)&0xFF,sizeof(KeyRepDesc)>>8,//HID类描述符
-    0x07,0x05,0x81,0x03,EP1_IN_SIZE,0x00,0x0a,                       //端点描述符
+    0x07,0x05,0x81,0x03,ENDP1_IN_SIZE,0x00,0x0a,                       //端点描述符
 
     0x09,0x04,0x01,0x00,0x01,0x03,0x01,0x02,0x00,                    //接口描述符,鼠标
     0x09,0x21,0x10,0x01,0x00,0x01,0x22,sizeof(MouseRepDesc)&0xFF,sizeof(MouseRepDesc)>>8,//HID类描述符
-    0x07,0x05,0x82,0x03,EP2_IN_SIZE,0x00,0x0a                        //端点描述符
+    0x07,0x05,0x82,0x03,ENDP2_IN_SIZE,0x00,0x0a                        //端点描述符
 };
 /*键盘数据*/
-UINT8 HIDKey[EP1_IN_SIZE];
+UINT8 HIDKey[ENDP1_IN_SIZE];
 /*鼠标数据*/
-UINT8 HIDMouse[EP2_IN_SIZE];
+UINT8 HIDMouse[ENDP2_IN_SIZE];
 UINT8 Endp1Busy = 0;                                                 //传输完成控制标志位
 UINT8 Endp2Busy = 0;
 UINT8 WakeUpEnFlag = 0;                                              //远程唤醒使能标志
@@ -124,13 +125,10 @@ void USBDeviceInit()
     UEP2_T_LEN = 0;                                                            //预使用发送长度一定要清空
     UEP2_DMA = Ep2Buffer;                                                      //端点2数据传输地址
     UEP2_3_MOD = UEP2_3_MOD & ~bUEP2_BUF_MOD | bUEP2_TX_EN;                    //端点2发送使能 64字节缓冲区
-    UEP2_CTRL = bUEP_AUTO_TOG | UEP_T_RES_NAK;                                 //端点2自动翻转同步标志位，IN事务返回NAK
     UEP0_DMA = Ep0Buffer;                                                      //端点0数据传输地址
     UEP4_1_MOD &= ~(bUEP4_RX_EN | bUEP4_TX_EN);                                //端点0单64字节收发缓冲区
-    UEP0_CTRL = UEP_R_RES_ACK | UEP_T_RES_NAK;                                 //OUT事务返回ACK，IN事务返回NAK
     UEP1_DMA = Ep1Buffer;                                                      //端点1数据传输地址
     UEP4_1_MOD = UEP4_1_MOD & ~bUEP1_BUF_MOD | bUEP1_TX_EN;                    //端点1发送使能 64字节缓冲区
-    UEP1_CTRL = bUEP_AUTO_TOG | UEP_T_RES_NAK;                                 //端点1自动翻转同步标志位，IN事务返回NAK
     USB_DEV_AD = 0x00;
     USB_CTRL |= bUC_DEV_PU_EN | bUC_INT_BUSY | bUC_DMA_EN;                     // 启动USB设备及DMA，在中断期间中断标志未清除前自动返回NAK
     UDEV_CTRL |= bUD_PORT_EN;                                                  // 允许USB端口
@@ -177,18 +175,18 @@ void    DeviceInterrupt( void ) interrupt INT_NO_USB using 1                    
         {
         case UIS_TOKEN_IN | 2:                                                  //endpoint 2# 中断端点上传
             UEP2_T_LEN = 0;                                                     //预使用发送长度一定要清空
-//            UEP1_CTRL ^= bUEP_T_TOG;                                          //如果不设置自动翻转则需要手动翻转
+            UEP2_CTRL ^= bUEP_T_TOG;                                          //手动翻转
             Endp2Busy = 0;
             UEP2_CTRL = UEP2_CTRL & ~ MASK_UEP_T_RES | UEP_T_RES_NAK;           //默认应答NAK
             break;
         case UIS_TOKEN_IN | 1:                                                  //endpoint 1# 中断端点上传
             UEP1_T_LEN = 0;                                                     //预使用发送长度一定要清空
-//            UEP2_CTRL ^= bUEP_T_TOG;                                          //如果不设置自动翻转则需要手动翻转
+            UEP1_CTRL ^= bUEP_T_TOG;                                          //手动翻转
             Endp1Busy = 0;
             UEP1_CTRL = UEP1_CTRL & ~ MASK_UEP_T_RES | UEP_T_RES_NAK;           //默认应答NAK
             break;
         case UIS_TOKEN_SETUP | 0:                                               //SETUP事务
-            UEP0_CTRL = UEP0_CTRL & (~MASK_UEP_T_RES )| UEP_T_RES_NAK;          //预置NAK,防止stall之后不及时清除响应方式
+            UEP0_CTRL = bUEP_R_TOG | bUEP_T_TOG | UEP_R_RES_ACK | UEP_T_RES_ACK;           //预置NAK,防止stall之后不及时清除响应方式
             len = USB_RX_LEN;
             if(len == (sizeof(USB_SETUP_REQ)))
             {
@@ -465,8 +463,8 @@ void    DeviceInterrupt( void ) interrupt INT_NO_USB using 1                    
     else if(UIF_BUS_RST)                                                  //设备模式USB总线复位中断
     {
         UEP0_CTRL = UEP_R_RES_ACK | UEP_T_RES_NAK;
-        UEP1_CTRL = bUEP_AUTO_TOG | UEP_T_RES_NAK;
-        UEP2_CTRL = bUEP_AUTO_TOG | UEP_T_RES_NAK;
+        UEP1_CTRL = UEP_T_RES_NAK;
+        UEP2_CTRL = UEP_T_RES_NAK;
         USB_DEV_AD = 0x00;
         UIF_SUSPEND = 0;
         UIF_TRANSFER = 0;
@@ -510,7 +508,7 @@ void    DeviceInterrupt( void ) interrupt INT_NO_USB using 1                    
 void HIDValueHandle()
 {
     UINT8 i;
-    i = getkey( );
+    i = _getkey( );
     printf( "%c", (UINT8)i );
     if( WakeUpEnFlag )                                                   //主机已休眠
     {

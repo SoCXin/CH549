@@ -3,19 +3,18 @@
 * Author             : WCH
 * Version            : V1.0
 * Date               : 2018/08/15
-* Description        : CH549模拟HID兼容设备，支持中断上下传，支持控制端点上下传，支持设置全速，低速
+* Description        : CH549模拟HID兼容设备，支持中断上下传，支持控制端点上下传，支持全速传输
                        注意包含DEBUG.C
 *******************************************************************************/
 #include ".\Public\CH549.H"
 #include ".\Public\DEBUG.H"
-#define Fullspeed
-#ifdef  Fullspeed
+
 #define THIS_ENDP0_SIZE         64
-#else
-#define THIS_ENDP0_SIZE         8                                                  //低速USB，中断传输、控制传输最大包长度为8
-#endif
-UINT8X  Ep0Buffer[ THIS_ENDP0_SIZE+2 ] _at_ 0x0000;                                //端点0 OUT&IN缓冲区，必须是偶地址
-UINT8X  Ep2Buffer[ 2*MAX_PACKET_SIZE+4] _at_ THIS_ENDP0_SIZE+2;                    //端点2 IN&OUT缓冲区,必须是偶地址
+#define ENDP2_IN_SIZE           64
+#define ENDP2_OUT_SIZE          64
+
+UINT8X  Ep0Buffer[MIN(64,THIS_ENDP0_SIZE+2)] _at_ 0x0000;   //端点0 OUT&IN缓冲区，必须是偶地址
+UINT8X  Ep2Buffer[MIN(64,ENDP2_IN_SIZE+2)+MIN(64,ENDP2_OUT_SIZE+2)] _at_ MIN(64,THIS_ENDP0_SIZE+2);                   							   //端点2 IN&OUT缓冲区,必须是偶地址
 UINT8   SetupReq,Ready,UsbConfig;
 UINT16  SetupLen;
 PUINT8  pDescr;                                                                    //USB配置标志
@@ -33,13 +32,8 @@ UINT8C CfgDesc[] =
     0x09,0x02,0x29,0x00,0x01,0x01,0x04,0xA0,0x23,               //配置描述符
     0x09,0x04,0x00,0x00,0x02,0x03,0x00,0x00,0x05,               //接口描述符
     0x09,0x21,0x00,0x01,0x00,0x01,0x22,0x22,0x00,               //HID类描述符
-#ifdef  Fullspeed
-    0x07,0x05,0x82,0x03,THIS_ENDP0_SIZE,0x00,0x01,              //端点描述符(全速间隔时间改成1ms)
-    0x07,0x05,0x02,0x03,THIS_ENDP0_SIZE,0x00,0x01,              //端点描述符
-#else
-    0x07,0x05,0x82,0x03,THIS_ENDP0_SIZE,0x00,0x0A,              //端点描述符(低速间隔时间最小10ms)
-    0x07,0x05,0x02,0x03,THIS_ENDP0_SIZE,0x00,0x0A,              //端点描述符
-#endif
+    0x07,0x05,0x82,0x03,ENDP2_IN_SIZE,0x00,0x01,              //端点描述符
+    0x07,0x05,0x02,0x03,ENDP2_OUT_SIZE,0x00,0x01,              //端点描述符
 };
 /*字符串描述符 略*/
 /*HID类报表描述符*/
@@ -82,21 +76,14 @@ void USBDeviceInit()
     IE_USB = 0;
     USB_CTRL = 0x00;                                                           // 先设定USB设备模式
     UDEV_CTRL = bUD_PD_DIS;                                                    // 禁止DP/DM下拉电阻
-#ifndef Fullspeed
-    UDEV_CTRL |= bUD_LOW_SPEED;                                                //选择低速1.5M模式
-    USB_CTRL |= bUC_LOW_SPEED;
-#else
     UDEV_CTRL &= ~bUD_LOW_SPEED;                                               //选择全速12M模式，默认方式
     USB_CTRL &= ~bUC_LOW_SPEED;
-#endif
     UEP2_T_LEN = 0;                                                            //预使用发送长度一定要清空
     UEP2_DMA = Ep2Buffer;                                                      //端点2数据传输地址
     UEP2_3_MOD |= bUEP2_TX_EN | bUEP2_RX_EN;                                   //端点2发送接收使能
     UEP2_3_MOD &= ~bUEP2_BUF_MOD;                                              //端点2收发各64字节缓冲区
-    UEP2_CTRL = bUEP_AUTO_TOG | UEP_T_RES_NAK | UEP_R_RES_ACK;                 //端点2自动翻转同步标志位，IN事务返回NAK，OUT返回ACK
     UEP0_DMA = Ep0Buffer;                                                      //端点0数据传输地址
     UEP4_1_MOD &= ~(bUEP4_RX_EN | bUEP4_TX_EN);                                //端点0单64字节收发缓冲区
-    UEP0_CTRL = UEP_R_RES_ACK | UEP_T_RES_NAK;                                 //OUT事务返回ACK，IN事务返回NAK
     USB_DEV_AD = 0x00;
     USB_CTRL |= bUC_DEV_PU_EN | bUC_INT_BUSY | bUC_DMA_EN;                     // 启动USB设备及DMA，在中断期间中断标志未清除前自动返回NAK
     UDEV_CTRL |= bUD_PORT_EN;                                                  // 允许USB端口
@@ -131,14 +118,15 @@ void  DeviceInterrupt( void ) interrupt INT_NO_USB using 1                     /
         {
         case UIS_TOKEN_IN | 2:                                                  //endpoint 2# 端点批量上传
             UEP2_T_LEN = 0;                                                     //预使用发送长度一定要清空
-//            UEP1_CTRL ^= bUEP_T_TOG;                                          //如果不设置自动翻转则需要手动翻转
+            UEP2_CTRL ^= bUEP_T_TOG;                                            //手动翻转同步标志位
             Endp2Busy = 0 ;
             UEP2_CTRL = UEP2_CTRL & ~ MASK_UEP_T_RES | UEP_T_RES_NAK;           //默认应答NAK
             break;
         case UIS_TOKEN_OUT | 2:                                                 //endpoint 2# 端点批量下传
             if ( U_TOG_OK )                                                     // 不同步的数据包将丢弃
             {
-                len = USB_RX_LEN;                                               //接收数据长度，数据从Ep2Buffer首地址开始存放
+                UEP2_CTRL ^= bUEP_R_TOG;									    //手动翻转同步标志位
+				len = USB_RX_LEN;                                               //接收数据长度，数据从Ep2Buffer首地址开始存放
                 for ( i = 0; i < len; i ++ )
                 {
                     Ep2Buffer[MAX_PACKET_SIZE+i] = Ep2Buffer[i] ^ 0xFF;         // OUT数据取反到IN由计算机验证
@@ -148,7 +136,7 @@ void  DeviceInterrupt( void ) interrupt INT_NO_USB using 1                     /
             }
             break;
         case UIS_TOKEN_SETUP | 0:                                               //SETUP事务
-            UEP0_CTRL = UEP0_CTRL & (~MASK_UEP_T_RES )| UEP_T_RES_NAK;          //预置NAK,防止stall之后不及时清除响应方式
+            UEP0_CTRL = bUEP_R_TOG | bUEP_T_TOG | UEP_R_RES_ACK | UEP_T_RES_ACK;          //预置NAK,防止stall之后不及时清除响应方式
             len = USB_RX_LEN;
             if(len == (sizeof(USB_SETUP_REQ)))
             {
@@ -409,9 +397,9 @@ void  DeviceInterrupt( void ) interrupt INT_NO_USB using 1                     /
     }
     else if(UIF_BUS_RST)                                                            //设备模式USB总线复位中断
     {
-        UEP0_CTRL = UEP_R_RES_ACK | UEP_T_RES_NAK;
-        UEP2_CTRL = bUEP_AUTO_TOG | UEP_R_RES_ACK | UEP_T_RES_NAK;
-        USB_DEV_AD = 0x00;
+		UEP0_CTRL = UEP_R_RES_ACK | UEP_T_RES_NAK;                                 
+        UEP2_CTRL = UEP_R_RES_ACK | UEP_T_RES_NAK;                                                				   
+		USB_DEV_AD = 0x00;
         UIF_SUSPEND = 0;
         UIF_TRANSFER = 0;
         Endp2Busy = 0;
