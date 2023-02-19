@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
 * File Name          : DEBUG.C
 * Author             : WCH
-* Version            : V1.0
-* Date               : 2018/09/20
+* Version            : V1.4
+* Date               : 2021/12/15
 * Description        : CH5XX DEBUG Interface
                      (1)、主频设置;
                      (2)、us\ms基本延时函数;										 
@@ -29,7 +29,11 @@ void CfgFsys( )
 		SAFE_MOD = 0x55;
 		SAFE_MOD = 0xAA;
     CLOCK_CFG |= bOSC_EN_XT;                          //使能外部晶振
-    CLOCK_CFG &= ~bOSC_EN_INT;                        //关闭内部晶振 
+		mDelaymS(10);
+		SAFE_MOD = 0x55;
+		SAFE_MOD = 0xAA;
+    CLOCK_CFG &= ~bOSC_EN_INT;                        //关闭内部晶振
+		SAFE_MOD = 0x00;
 #else
 		SAFE_MOD = 0x55;
 		SAFE_MOD = 0xAA;

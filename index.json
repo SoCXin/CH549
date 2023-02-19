@@ -1,80 +1,36 @@
 {
     "type":"MCU",
     "name":"CH549",
-    "title": "WCH MCU CH549",
-    "description":"WCH 1T 8051 MCU",
-    "version":"1.0.0",
+    "title": "WCH CH549 MCU",
+    "description":"WCH USB-PD MCU",
     "Core": {
-        "num": 1,
-        "type":"8051",
-        "Freq":48,
-        "DMIPS": 100,
-        "CoreMark": 160
+        "CoreNum": 1,
+        "Core":"MCS-51",
+        "Fmax":48,
+        "DMIPS": 48,
+        "CoreMark": 48
     },
     "manufacturer": {
         "vendor":"WCH",
-        "homepage": "http://www.wch.cn/products/CH549.html"
+        "homepage":"http://www.wch.cn"
     },
     "repository": {
         "type": "git",
         "url": "https://github.com/SoCXin/CH549.git"
     },
+    "version":"1.0.0",
     "series":["CH549","CH548"],
     "package":["LQFP48","QFN28","SOP16"],
-    "peripheral": ["TIM","ADC","USB","UART","SPI","LDO","PWM"],
-    "RMB":[4,6],
-    "TIM": {
-        "resolution":[16,16,16],
-        "WWDG": true
-    },
-    "UART": {
-        "mark": ["UART1","UART2"],
-        "BIT":[5,6,7,8,9],
-        "ISO7816":true,
-        "IrDA":true,
-        "LIN":true,
-        "FIFO": 16,
-        "BPS": [48,3000000]
-    },
-    "ADC": {
-        "num": 1,
-        "channel": 4,
-        "resolution": 12,
-        "MSPS": 1
-    },
-    "USB": {
-        "num": 1,
-        "PD": true,
-        "FIFO": true,
-        "more":["FS","type-C","Host","Device"]
-    },
-    "PWR": {
-        "VDD": [2800,5000],
-        "Ivdd": 3.5,
-        "LDO": [5000,3300],
-        "rate": 1024
-    },
-    "PWM": {
-        "num": 2,
-        "resolution": 8,
-        "rate": 256
-    },
-    "EMC": {
-        "EFT": 2000,
-        "ESD": 4000
-    },
-    "upload": {
-        "ISP": true,
-        "IAP": true,
-        "SWD": true,
-        "speed": 115200
+    "peripheral": ["USB","ADC","UART","SPI","IIC"],
+    "temp": [-40,85],
+    "volt": [2.5,5.5],
+    "ESD": {
+        "HBM": 4000,
+        "CDM": 500
     },
     "keywords": [
-        "dev-platform",
-        "8051",
+        "MCS-51",
         "WCH",
-        "CH549",
-        "USB","PD","I2C","UART","SPI",
-        "3.3V","5.5V"
+        "USB","PD","ADC","I2C","USB","SPI","UART"
     ]
 }
